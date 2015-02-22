@@ -1,0 +1,64 @@
+.browsehappy {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}
+
+/* Space out content a bit */
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background: black;
+  color: white;
+  text-align: center;
+}
+
+.connecting {
+  margin-left: 20px;
+}
+
+.big-red-button {
+  top: 10%;
+  outline: none;
+  border-radius: 50%;
+  background-color: red;
+  display: none;
+  position: relative;
+  border-width: 10px;
+}
+
+.big-red-button:active {
+  background-color: #B00;
+}
+
+.info-text {
+  font-size: 2em;
+  font-weight: bold;
+  height: 50px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.can-answer {
+  background: forestgreen;
+}
+
+.wrong-answer {
+  background: crimson;
+}
+
+.quizJs {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  font-size: 2em;
+}
+
+.yourIdIs {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  display: none;
+  font-size: 2em;
+}
