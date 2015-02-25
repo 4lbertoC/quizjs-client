@@ -3,41 +3,6 @@
 (function() {
 	'use strict';
 
-	/*
-	 * Events received by the clients.
-	 */
-	var ACTION = {
-		CLIENT: {
-			// Triggered when a client connects
-			CONNECT: 'quizjs-client-connect',
-			// Triggered when a client subscribes to a question
-			SUBSCRIBE: 'quizjs-client-subscribe'
-		},
-		MASTER: {
-			// Triggered when the master resets the state
-			RESET: 'quizjs-master-reset',
-			// Triggered when a client's answer was wrong and the master lets the next person answer
-			NEXT: 'quizjs-master-next'
-		}
-	};
-
-	/**
-	 * Events sent by the server.
-	 */
-	var EVENT = {
-		CLIENT: {
-			// Triggered when a client is registered to the server
-			REGISTER: 'quizjs-client-register'
-		},
-		MASTER: {
-			// Triggered when a client is registered to the server
-			REGISTER: 'quizjs-master-register'
-		},
-		STATE: {
-			RESET: 'quizjs-state-reset',
-			UPDATE: 'quizjs-state-update'
-		}
-	};
 
 	var bigRedButton = $('.big-red-button');
 	var infoText = $('.info-text');
@@ -49,26 +14,7 @@
 	var hasSubmitted = false;
 	var clientId;
 
-	function resizeButton() {
-		var minSize = Math.min($(window).width(), $(window).height());
-		bigRedButton.css({
-			width: minSize * 0.8,
-			height: minSize * 0.8
-		});
-	}
-
-	$(window).on('resize', function() {
-		if (connected) {
-			resizeButton();
-		}
-	});
-
-	var socket = io('https://quizjs.herokuapp.com');
-	socket.on('connect', function() {
-		socket.emit(ACTION.CLIENT.CONNECT);
-	});
-
-	socket.on(EVENT.CLIENT.REGISTER, function(data) {
+	function onQuizJsClientRegister(data) {
 		$('.connecting').hide();
 		resizeButton();
 		bigRedButton.show();
@@ -76,9 +22,9 @@
 		yourId.text(clientId);
 		yourIdIs.show();
 		connected = true;
-	});
+	}
 
-	socket.on(EVENT.STATE.UPDATE, function(data) {
+	function onQuizJsStateUpdate(data) {
 		var speakerId = data.speakerId;
 
 		if (!hasSubmitted) {
@@ -96,21 +42,39 @@
 			infoText.text('Too slow!');
 			body.addClass('too-slow');
 		}
-	});
+	}
 
-	socket.on(EVENT.STATE.RESET, function() {
+	function onQuizJsStateReset() {
 		bigRedButton.show();
 		infoText.text('');
 		body.removeClass('can-answer');
 		body.removeClass('wrong-answer');
 		body.removeClass('too-slow');
 		hasSubmitted = false;
+	}
+
+	function resizeButton() {
+		var minSize = Math.min($(window).width(), $(window).height());
+		bigRedButton.css({
+			width: minSize * 0.8,
+			height: minSize * 0.8
+		});
+	}
+
+	$(window).on('resize', function() {
+		if (connected) {
+			resizeButton();
+		}
 	});
+
+	// QuizJsClient.connect('http://quizjs.herokuapp.com');
+	QuizJsClient.connect('http://localhost:2450');
+	QuizJsClient.on('quizjs-state-update', onQuizJsStateUpdate);
+	QuizJsClient.on('quizjs-state-reset', onQuizJsStateReset);
+	QuizJsClient.on('quizjs-client-register', onQuizJsClientRegister);
 
 	bigRedButton.on('click', function() {
 		hasSubmitted = true;
-		socket.emit('quizjs-client-subscribe', {
-			clientId: clientId
-		});
+		QuizJsClient.subscribe();
 	});
 })();

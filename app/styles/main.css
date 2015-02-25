@@ -19,17 +19,20 @@ body {
 }
 
 .big-red-button {
+  box-sizing: content-box;
   top: 10%;
   outline: none;
-  border-radius: 50%;
+  border-radius: 60%;
   background-color: red;
   display: none;
   position: relative;
-  border-width: 10px;
+  border-width: 15px 5px 5px 5px;
+  border-style: solid;
+  border-color: crimson;
 }
 
 .big-red-button:active {
-  background-color: #B00;
+  border-width: 5px;
 }
 
 .info-text {
