@@ -10,16 +10,18 @@
 	var yourIdIs = $('.yourIdIs');
 	var yourId = $('.yourId');
 
+	var qjp = new QuizJsPlayer();
+	
 	var connected = false;
 	var hasSubmitted = false;
-	var clientId;
+	var playerId;
 
-	function onQuizJsClientRegister(data) {
+	function onQuizJsPlayerRegister(data) {
 		$('.connecting').hide();
 		resizeButton();
 		bigRedButton.show();
-		clientId = data.clientId;
-		yourId.text(clientId);
+		playerId = data.playerId;
+		yourId.text(playerId);
 		yourIdIs.show();
 		connected = true;
 	}
@@ -31,7 +33,7 @@
 			return;
 		}
 
-		if (speakerId === clientId) {
+		if (speakerId === playerId) {
 			bigRedButton.hide();
 			infoText.text('You can answer!');
 			body.addClass('can-answer');
@@ -67,14 +69,14 @@
 		}
 	});
 
-	// QuizJsClient.connect('http://quizjs.herokuapp.com');
-	QuizJsClient.connect('http://localhost:2450');
-	QuizJsClient.on('quizjs-state-update', onQuizJsStateUpdate);
-	QuizJsClient.on('quizjs-state-reset', onQuizJsStateReset);
-	QuizJsClient.on('quizjs-client-register', onQuizJsClientRegister);
+	// qjp.connect('http://quizjs.herokuapp.com');
+	qjp.connect('http://localhost:2450');
+	qjp.on('quizjs-state-update', onQuizJsStateUpdate);
+	qjp.on('quizjs-state-reset', onQuizJsStateReset);
+	qjp.on('quizjs-player-register', onQuizJsPlayerRegister);
 
 	bigRedButton.on('click', function() {
 		hasSubmitted = true;
-		QuizJsClient.subscribe();
+		qjp.subscribe();
 	});
 })();
